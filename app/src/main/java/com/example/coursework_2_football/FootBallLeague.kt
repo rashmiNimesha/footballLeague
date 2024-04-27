@@ -5,8 +5,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "football_leagues")
 data class FootBallLeague(
-    @PrimaryKey(autoGenerate = true)
-    var idLeague: Int= 0,
+    @PrimaryKey()
+    var idLeague: Int,
     var strLeague: String?,
     var strSport: String,
     var strLeagueAlternate: String

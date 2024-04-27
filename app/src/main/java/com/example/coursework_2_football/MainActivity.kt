@@ -136,53 +136,62 @@ fun HomeScreen(onClicked: (String) -> Unit) {
         }
 
         item {
-            Row {
+            Spacer(modifier = Modifier.height(60.dp))
+            Row (modifier =  Modifier.padding(vertical = 10.dp)){
                 Button(onClick = {
                     try {
                         scope.launch {
-                            footballLeaguedao.insertLeague(
-                                FootBallLeague(
-                                    idLeague = idLeague,
-                                    strLeague = strLeague,
-                                    strSport = strSport,
-                                    strLeagueAlternate = strLeagueAlternate
-                                )
+                            val leagueData = listOf(
+                                FootBallLeague(4328,"English Premier League","Soccer","Premier League, EPL"),
+                                FootBallLeague(4329, "English League Championship", "Soccer","Championship"),
+                                FootBallLeague(4330, "Scottish Premier League", "Soccer", "Scottish Premiership, SPFL"),
+                                FootBallLeague(4331,"German Bundesliga","Soccer","Bundesliga, Fußball-Bundesliga"),
+                                FootBallLeague(4332,"Italian Serie A", "Soccer","Serie A"),
+                                FootBallLeague(4334,"French Ligue 1", "Soccer","Ligue 1 Conforama"),
+                                FootBallLeague(4335, "Spanish La Liga", "Soccer", "LaLiga Santander, La Liga"),
+                                FootBallLeague(4336,"Greek Superleague Greece", "Soccer",""),
+                                FootBallLeague(4337,"Dutch Eredivisie","Soccer", "Eredivisie"),
+                                FootBallLeague(4338, "Belgian First Division A","Soccer", "Jupiler Pro League"),
+                                FootBallLeague(4339, "Turkish Super Lig", "Soccer", "Super Lig"),
+                                FootBallLeague(4340, "Danish Superliga","Soccer",""),
+                                FootBallLeague(4344, "Portuguese Primeira Liga","Soccer","Liga NOS"),
+                                FootBallLeague(4346,"American Major League Soccer","Soccer","MLS, Major League Soccer"),
+                                FootBallLeague(4347,"Swedish Allsvenskan","Soccer","Fotbollsallsvenskan"),
+                                FootBallLeague(4350,"Mexican Primera League","Soccer","Liga MX"),
+                                FootBallLeague(4351,"Brazilian Serie A","Soccer",""),
+                                FootBallLeague(4354,"Ukrainian Premier League", "Soccer",""),
+                                FootBallLeague(4355,"Russian Football Premier League","Soccer",""),
+                                FootBallLeague(4356,"Australian A-League","Soccer","A-League"),
+                                FootBallLeague(4358,"Norwegian Eliteserien","Soccer","Eliteserien"),
+                                FootBallLeague(4359,"Chinese Super League","Soccer",""),
                             )
+                            leagueData.forEach{
+                                lea -> footballLeaguedao.insertLeague(lea)
+                            }
+
                         }
                     } catch (e: NumberFormatException) {
 
                     }
 
-                }) {
-                    Text(text = "Add League")
-                }
-            }
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(50.dp))
-            // when button clicks navigate to guess the hints page
-            Row(modifier = Modifier.padding(vertical = 10.dp)) {
-                Button(
-                    onClick = {
-                        onClicked("AddLeaguesToDB")
-                    },
+                },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF75A488)),
                     modifier = Modifier
                         .padding(4.dp)
                         .width(300.dp),
-                ) {
-                    Text(
-                        "Add Leagues to DB",
+                )
+                 {
+                    Text(text = "Add Leagues to DB",
                         color = Color.White,
                         fontSize = 17.sp,
-                        fontWeight = FontWeight.Medium
-                    )
+                        fontWeight = FontWeight.Medium)
                 }
             }
         }
 
-        item {   //// when button clicks navigate to guess the hints page
+
+
+        item {
             Row(modifier = Modifier.padding(vertical = 10.dp)) {
                 Button(
                     onClick = {
@@ -203,7 +212,7 @@ fun HomeScreen(onClicked: (String) -> Unit) {
             }
         }
 
-        item {   // when button clicks navigate to guess the hints page
+        item {
             Row(modifier = Modifier.padding(vertical = 10.dp)) {
                 Button(
                     onClick = {
