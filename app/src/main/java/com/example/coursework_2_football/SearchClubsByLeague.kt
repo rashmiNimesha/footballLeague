@@ -129,7 +129,6 @@ Spacer(modifier = Modifier.width(15.dp))
 }
 
 suspend fun retrieveClubs(keyword: String): String {
-// val url_string = "https://www.googleapis.com/books/v1/volumes?q=android&maxResults=25"
     val url_string = "https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l=${keyword}"
     val url = URL(url_string)
     val con: HttpURLConnection = url.openConnection() as HttpURLConnection
