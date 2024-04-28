@@ -63,7 +63,6 @@ class MainActivity : ComponentActivity() {
 
     fun nav(activityName: String) {   //Navigate using intents
         val intent = when (activityName) {
-            "AddLeaguesToDB" -> Intent(this, AddLeaguesActivity::class.java)
             "SearchClubsByLeague" -> Intent(this, SearchClubsByLeague::class.java)
             "SearchForClubsActivity" -> Intent(this, SearchForClubsActivity::class.java)
             else -> {
@@ -78,10 +77,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun HomeScreen(onClicked: (String) -> Unit) {
     val scope = rememberCoroutineScope()
-    var idLeague by rememberSaveable { mutableStateOf(0) }
-    var strLeague by rememberSaveable { mutableStateOf("") }
-    var strSport by rememberSaveable { mutableStateOf("") }
-    var strLeagueAlternate by rememberSaveable { mutableStateOf("") }
 
     LazyColumn(
         modifier = Modifier
