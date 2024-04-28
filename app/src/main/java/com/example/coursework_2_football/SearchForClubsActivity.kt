@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -48,7 +51,70 @@ class SearchForClubsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            SearchForClubsFromDB()
+        }
+    }
+}
 
+
+@Composable
+fun SearchForClubsFromDB (){
+    var keyword by rememberSaveable { mutableStateOf("") }
+
+    val scope = rememberCoroutineScope()
+
+    LazyColumn (
+        modifier = Modifier
+            .fillMaxSize(),
+
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF75A488))
+                    .padding(start = 60.dp),
+                verticalAlignment = Alignment.CenterVertically,
+
+                ) {
+                Text(
+                    modifier = Modifier.padding(10.dp),
+                    text = "FOOTBALL LEAGUES",
+                    fontFamily = FontFamily.SansSerif,
+                    color = Color.Black,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+                Spacer(
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(50.dp))
+            TextField(value = keyword, onValueChange = { keyword = it },
+                label = { Text("Name of a football league/ club") },)
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(50.dp))
+
+            Button(onClick = {
+                scope.launch {
+
+                }
+            },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF75A488)),
+                modifier = Modifier
+                    .padding(4.dp)
+                    .width(160.dp),) {
+                Text("Search",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium)
+            }
         }
     }
 }

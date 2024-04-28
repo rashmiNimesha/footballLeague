@@ -6,10 +6,11 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
-interface clubDao{
+interface ClubDetailsDao{
     @Query("SELECT * FROM club_details")
     suspend fun getAllLeagues(): List<ClubDetails>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertLeague(league: ClubDetails)
+    suspend fun insertTeam(club: ClubDetails)
+
 }

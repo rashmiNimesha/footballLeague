@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.room.Room
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,9 +41,18 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 
+lateinit var database_: AppDatabase
+lateinit var clubDetailsdao: ClubDetailsDao
+var listClub = mutableListOf<ClubDetails>()
 class SearchClubsByLeague : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        database_ = Room.databaseBuilder(
+            this,
+            AppDatabase::class.java, "mydatabase"
+        ).build()
+        clubDetailsdao = database_.getClubDao()
+
         setContent {
             SearchClubsByLeagueFun()
         }
@@ -57,6 +67,8 @@ fun SearchClubsByLeagueFun() {
     var keyword by rememberSaveable { mutableStateOf("") }
 // Creates a CoroutineScope bound to the GUI composable lifecycle
     val scope = rememberCoroutineScope()
+
+
     LazyColumn (
         modifier = Modifier
             .fillMaxSize(),
@@ -108,7 +120,15 @@ Spacer(modifier = Modifier.height(50.dp))
                         fontWeight = FontWeight.Medium)
                 }
 Spacer(modifier = Modifier.width(15.dp))
-                Button(onClick = { /*TODO*/ },
+                Button(onClick = {
+                    scope.launch {
+                        clubDetails = retrieveClubs(keyword)
+                        listClub.forEach{
+                            clu ->clubDetailsdao.insertTeam(clu)
+                        }
+
+                    }
+                    },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF75A488)),
                     modifier = Modifier
                         .padding(4.dp)
@@ -152,7 +172,7 @@ suspend fun retrieveClubs(keyword: String): String {
     return parseJSON(stb.toString())
 }
 
-fun parseJSON(stb: String): String {
+suspend fun parseJSON(stb: String): String {
 // this contains the full JSON returned by the Web Service
     val json = JSONObject(stb)
 // Information about all the books extracted by this function
@@ -192,7 +212,68 @@ fun parseJSON(stb: String): String {
                     "Jersey URL: $jerseyUrl\n" +
                     "Logo URL: $logoUrl\n\n"
         )
+        val clubDetails = ClubDetails(
+            idTeam,
+            name,
+            shortName,
+            alternateName,
+            formedYear,
+            league,
+            stadium,
+            stadiumLocation,
+            stadiumCapacity,
+            website,
+            jerseyUrl,
+            logoUrl
+        )
+
+        listClub.add(clubDetails)
+
+
     }
 
     return allTeams.toString()
 }
+//suspend fun saveClubsToDatabase(clubDetailsString: String) {
+//    val jsonArray = JSONArray(clubDetailsString)
+//
+//    withContext(Dispatchers.IO) {
+//        try {
+//            for (i in 0 until jsonArray.length()) {
+//                val team = jsonArray.getJSONObject(i)
+//                val idTeam = team.getString("idTeam")
+//                val name = team.getString("strTeam")
+//                val shortName = team.getString("strTeamShort")
+//                val alternateName = team.getString("strAlternate")
+//                val formedYear = team.getString("intFormedYear")
+//                val league = team.getString("strLeague")
+//                val stadium = team.getString("strStadium")
+//                val stadiumLocation = team.getString("strStadiumLocation")
+//                val stadiumCapacity = team.getString("intStadiumCapacity")
+//                val website = team.getString("strWebsite")
+//                val jerseyUrl = team.getString("strTeamJersey")
+//                val logoUrl = team.getString("strTeamLogo")
+//
+//                val clubDetails = ClubDetails(
+//                    idTeam,
+//                    name,
+//                    shortName,
+//                    alternateName,
+//                    formedYear,
+//                    league,
+//                    stadium,
+//                    stadiumLocation,
+//                    stadiumCapacity,
+//                    website,
+//                    jerseyUrl,
+//                    logoUrl
+//                )
+//
+//                clubDetailsdao.insertTeam(clubDetails)
+//            }
+//        } catch (e: Exception) {
+//            // Handle any exceptions or errors here
+//            e.printStackTrace()
+//        }
+//    }
+//}
