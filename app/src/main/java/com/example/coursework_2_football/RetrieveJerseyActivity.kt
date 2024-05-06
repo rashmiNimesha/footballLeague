@@ -3,7 +3,6 @@ package com.example.coursework_2_football
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,8 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -130,6 +127,7 @@ fun RetrieveTShirts() {
         }
     }
 }
+
 suspend fun retrieveClubss(keyword: String): String {
     val url_string = "https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l=${keyword}"
     val url = URL(url_string)
@@ -154,7 +152,7 @@ suspend fun retrieveClubss(keyword: String): String {
     return parseJSONN(stb.toString())
 }
 
- fun parseJSONN(stb: String): String {
+fun parseJSONN(stb: String): String {
 
     val json = JSONObject(stb)
 
@@ -175,14 +173,11 @@ suspend fun retrieveClubss(keyword: String): String {
 
 
         allTeams.append(
-                    "Team ID: $idTeam\n" +
+            "Team ID: $idTeam\n" +
                     "Name            : $name\n" +
                     "Short Name      : $shortName\n"
 
         )
-
-
-
 
 
     }

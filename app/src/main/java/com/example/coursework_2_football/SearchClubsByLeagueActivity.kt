@@ -43,7 +43,6 @@ import java.net.URL
 
 
 lateinit var clubDetailsdao: ClubDetailsDao
-
 var listClub = mutableListOf<ClubDetails>()
 
 class SearchClubsByLeague : ComponentActivity() {
@@ -63,11 +62,8 @@ class SearchClubsByLeague : ComponentActivity() {
 
 @Composable
 fun SearchClubsByLeagueFun() {
-
     var clubDetails by rememberSaveable { mutableStateOf(" ") }
-// the book title keyword to search for
-    var keyword by rememberSaveable { mutableStateOf("") }
-// Creates a CoroutineScope bound to the GUI composable lifecycle
+    var searchKeyword by rememberSaveable { mutableStateOf("") }
     val scope = rememberCoroutineScope()
 
 
@@ -99,10 +95,11 @@ fun SearchClubsByLeagueFun() {
                 )
             }
         }
+        // text filed user can enter search keyword
         item {
             Spacer(modifier = Modifier.height(50.dp))
             TextField(
-                value = keyword, onValueChange = { keyword = it },
+                value = searchKeyword, onValueChange = { searchKeyword = it },
                 label = { Text("Name of a football league") },
             )
         }
@@ -112,7 +109,7 @@ fun SearchClubsByLeagueFun() {
                 Button(
                     onClick = {
                         scope.launch {
-                            clubDetails = retrieveClubs(keyword)
+                            clubDetails = retrieveClubs(searchKeyword)
                         }
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF75A488)),
@@ -131,7 +128,7 @@ fun SearchClubsByLeagueFun() {
                 Button(
                     onClick = {
                         scope.launch {
-                            clubDetails = retrieveClubs(keyword)
+                            clubDetails = retrieveClubs(searchKeyword)
                             listClub.forEach { clu ->
                                 clubDetailsdao.insertTeam(clu)
                             }
@@ -163,14 +160,13 @@ suspend fun retrieveClubs(keyword: String): String {
     val url_string = "https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l=${keyword}"
     val url = URL(url_string)
     val con: HttpURLConnection = url.openConnection() as HttpURLConnection
-// collecting all the JSON string
-    var stb = StringBuilder()
-// run the code of the launched coroutine in a new thread
+    var stb = StringBuilder()    // collect all JSON str
+
     withContext(Dispatchers.IO) {
         try {
             var bf = BufferedReader(InputStreamReader(con.inputStream))
             var line: String? = bf.readLine()
-            while (line != null) { // keep reading until no more lines of text
+            while (line != null) {
                 stb.append(line + "\n")
                 line = bf.readLine()
             }
@@ -183,16 +179,12 @@ suspend fun retrieveClubs(keyword: String): String {
     return parseJSON(stb.toString())
 }
 
-suspend fun parseJSON(stb: String): String {
-// this contains the full JSON returned by the Web Service
-    val json = JSONObject(stb)
-// Information about all the books extracted by this function
+fun parseJSON(stb: String): String {
+    val jsonObj = JSONObject(stb)    // returned JSON from web API
     var allTeams = StringBuilder()
+    var jsonArray: JSONArray = jsonObj.optJSONArray("teams") ?: JSONArray()
 
-    var jsonArray: JSONArray = json.optJSONArray("teams") ?: JSONArray()
-
-    if (jsonArray.length() == 0) {
-        // No clubs found for the given keyword
+    if (jsonArray.length() == 0) {  // check whether keyword has a reuslt or not
         return "No clubs found!!"
     }
 // extract all the books from the JSON array

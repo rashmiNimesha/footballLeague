@@ -2,7 +2,6 @@ package com.example.coursework_2_football
 
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Size
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -17,11 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -29,7 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -40,24 +35,15 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.room.Room
-import com.example.coursework_2_football.ui.theme.Coursework_2_FootballTheme
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 
-var listClub_ = mutableListOf<ClubDetails>()
 class SearchForClubsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,18 +60,18 @@ class SearchForClubsActivity : ComponentActivity() {
 
 
 @Composable
-fun SearchForClubsFromDB (){
-    var keyword by rememberSaveable { mutableStateOf("") }
-    var searchResults by rememberSaveable { mutableStateOf((listOf <ClubDetails>())) }
+fun SearchForClubsFromDB() {
+    var searchkeyword by rememberSaveable { mutableStateOf("") }
+    var searchResults by rememberSaveable { mutableStateOf((listOf<ClubDetails>())) }
     val scope = rememberCoroutineScope()
-    var searchNotFound by rememberSaveable { mutableStateOf(false) }
+    var resultNotFound by rememberSaveable { mutableStateOf(false) }
 
-    LazyColumn (
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize(),
 
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         item {
             Row(
                 modifier = Modifier
@@ -111,28 +97,32 @@ fun SearchForClubsFromDB (){
 
         item {
             Spacer(modifier = Modifier.height(50.dp))
-            TextField(value = keyword, onValueChange = { keyword = it },
-                label = { Text("Name of a football league/ club") },)
+            TextField(
+                value = searchkeyword, onValueChange = { searchkeyword = it },
+                label = { Text("Name of a football league/ club") },
+            )
         }
 
         item {
             Spacer(modifier = Modifier.height(50.dp))
 
-            Button(onClick = {
-                scope.launch {
-                    val result = clubDetailsdao.searchClubs(keyword)
-                    if (result.isEmpty()) {
-                        searchNotFound = true // Set flag if search results are empty
-                    } else {
-                        searchResults = result
-                        searchNotFound = false // Reset flag if search results are not empty
+            Button(
+                onClick = {
+                    scope.launch {
+                        val result = clubDetailsdao.searchClubs(searchkeyword)
+                        if (result.isEmpty()) {
+                            resultNotFound = true // empty
+                        } else {
+                            searchResults = result
+                            resultNotFound = false // not empty
+                        }
                     }
-                }
-            },
+                },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF75A488)),
                 modifier = Modifier
                     .padding(4.dp)
-                    .width(160.dp),) {
+                    .width(160.dp),
+            ) {
                 Text(
                     "Search",
                     color = Color.White,
@@ -143,7 +133,7 @@ fun SearchForClubsFromDB (){
             }
 
         }
-        if (searchNotFound) { // Display message if search not found
+        if (resultNotFound) { //Verify whether the result is accessible.
             item {
                 Text(
                     text = "Search not found",
@@ -164,7 +154,6 @@ fun SearchForClubsFromDB (){
 
 @Composable
 fun ClubListItem(club: ClubDetails) {
-
     var imgBitmap by rememberSaveable { mutableStateOf<ImageBitmap?>(null) }
 
     Surface(
@@ -175,50 +164,98 @@ fun ClubListItem(club: ClubDetails) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-                LaunchedEffect(key1 = club.strTeamLogo) {
-                    val bitmapImg= withContext(Dispatchers.IO){
-                        fetchImageBitMap(club.strTeamLogo)
-                    }
-                    imgBitmap= bitmapImg
+            LaunchedEffect(key1 = club.strTeamLogo) {
+                val bitmapImg = withContext(Dispatchers.IO) {
+                    fetchImageBitMap(club.strTeamLogo)
                 }
+                imgBitmap = bitmapImg
+            }
             imgBitmap.let {
-                    if (it != null) {
-                        Image(
-                            bitmap = it,
-                            contentDescription = "Club Logo",
-                            modifier = Modifier
-                                .width(100.dp)
-                                .height(100.dp)
-                        )
-                    }
+                if (it != null) {
+                    Image(
+                        bitmap = it,
+                        contentDescription = "Club Logo",
+                        modifier = Modifier
+                            .width(100.dp)
+                            .height(100.dp)
+                    )
                 }
-                Text(text = "IdTeam      : ${club.idTeam}", fontWeight = FontWeight.Normal, fontSize = 16.sp)
-                Text(text = "Name        : ${club.strTeam}", fontWeight = FontWeight.Normal, fontSize = 16.sp)
-                Text(text = "strTeamShort: ${club.strTeamShort}", fontWeight = FontWeight.Normal,fontSize = 16.sp)
-                Text(text = "strAlternate: ${club.strAlternate}", fontWeight = FontWeight.Normal,fontSize = 16.sp)
-                Text(text = "idLeague    : ${club.intFormedYear}", fontWeight = FontWeight.Normal,fontSize = 16.sp)
-                Text(text = "strLeague   : ${club.strLeague}", fontWeight = FontWeight.Normal,fontSize = 16.sp)
-                Text(text = "idLeague    : ${club.strStadium}", fontWeight = FontWeight.Normal,fontSize = 16.sp)
-                Text(text = "League      : ${club.strStadiumLocation}", fontWeight = FontWeight.Normal,fontSize = 16.sp)
-                Text(text = "idLeague    : ${club.intStadiumCapacity}", fontWeight = FontWeight.Normal,fontSize = 16.sp)
-                Text(text = "idLeague    : ${club.strWebsite}", fontWeight = FontWeight.Normal,fontSize = 16.sp)
-                Text(text = "idLeague    : ${club.strTeamJersey}", fontWeight = FontWeight.Normal,fontSize = 16.sp)
-                Text(text = "idLeague    : ${club.strTeamLogo}", fontWeight = FontWeight.Normal,fontSize = 16.sp)
+            }
+            Text(
+                text = "IdTeam      : ${club.idTeam}",
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp
+            )
+            Text(
+                text = "Name        : ${club.strTeam}",
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp
+            )
+            Text(
+                text = "strTeamShort: ${club.strTeamShort}",
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp
+            )
+            Text(
+                text = "strAlternate: ${club.strAlternate}",
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp
+            )
+            Text(
+                text = "idLeague    : ${club.intFormedYear}",
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp
+            )
+            Text(
+                text = "strLeague   : ${club.strLeague}",
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp
+            )
+            Text(
+                text = "idLeague    : ${club.strStadium}",
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp
+            )
+            Text(
+                text = "League      : ${club.strStadiumLocation}",
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp
+            )
+            Text(
+                text = "idLeague    : ${club.intStadiumCapacity}",
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp
+            )
+            Text(
+                text = "idLeague    : ${club.strWebsite}",
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp
+            )
+            Text(
+                text = "idLeague    : ${club.strTeamJersey}",
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp
+            )
+            Text(
+                text = "idLeague    : ${club.strTeamLogo}",
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp
+            )
 
-                Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
         }
     }
 }
 
 
-fun fetchImageBitMap(url: String):ImageBitmap{
-    val connection= URL(url).openConnection() as HttpURLConnection
-    connection.doInput= true
+fun fetchImageBitMap(url: String): ImageBitmap {
+    val connection = URL(url).openConnection() as HttpURLConnection
+    connection.doInput = true
     connection.connect()
 
-    val inputStream= connection.inputStream
-    val bitmap= BitmapFactory.decodeStream(inputStream)
+    val inputStream = connection.inputStream
+    val bitmap = BitmapFactory.decodeStream(inputStream)
     return bitmap.asImageBitmap()
 }
 

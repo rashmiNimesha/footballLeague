@@ -9,7 +9,6 @@ import androidx.room.Query
 interface FootballLeagueDao {
     @Query("SELECT * FROM football_leagues")
     suspend fun getAllLeagues(): List<FootBallLeague>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLeague(league: FootBallLeague)
 
