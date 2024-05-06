@@ -78,6 +78,7 @@ fun SearchForClubsFromDB (){
     var keyword by rememberSaveable { mutableStateOf("") }
     var searchResults by rememberSaveable { mutableStateOf((listOf <ClubDetails>())) }
     val scope = rememberCoroutineScope()
+    var searchNotFound by rememberSaveable { mutableStateOf(false) }
 
     LazyColumn (
         modifier = Modifier
@@ -119,13 +120,13 @@ fun SearchForClubsFromDB (){
 
             Button(onClick = {
                 scope.launch {
-                    // Call the DAO method to search for clubs based on the keyword
-                     searchResults = clubDetailsdao.searchClubs(keyword)
-//                    searchResults = clubs
-
-
-                    // Update UI with the search results
-                    // You can use a state variable to hold the search results and display them in the UI
+                    val result = clubDetailsdao.searchClubs(keyword)
+                    if (result.isEmpty()) {
+                        searchNotFound = true // Set flag if search results are empty
+                    } else {
+                        searchResults = result
+                        searchNotFound = false // Reset flag if search results are not empty
+                    }
                 }
             },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF75A488)),
@@ -142,8 +143,20 @@ fun SearchForClubsFromDB (){
             }
 
         }
-        items(searchResults) { club ->
-            ClubListItem(club)
+        if (searchNotFound) { // Display message if search not found
+            item {
+                Text(
+                    text = "Search not found",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = Color.Red,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
+        } else {
+            items(searchResults) { club ->
+                ClubListItem(club)
+            }
         }
 
     }
@@ -179,10 +192,6 @@ fun ClubListItem(club: ClubDetails) {
                         )
                     }
                 }
-
-
-
-
                 Text(text = "IdTeam      : ${club.idTeam}", fontWeight = FontWeight.Normal, fontSize = 16.sp)
                 Text(text = "Name        : ${club.strTeam}", fontWeight = FontWeight.Normal, fontSize = 16.sp)
                 Text(text = "strTeamShort: ${club.strTeamShort}", fontWeight = FontWeight.Normal,fontSize = 16.sp)

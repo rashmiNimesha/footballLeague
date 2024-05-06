@@ -63,8 +63,9 @@ class MainActivity : ComponentActivity() {
 
     fun nav(activityName: String) {   //Navigate using intents
         val intent = when (activityName) {
-            "SearchClubsByLeague" -> Intent(this, SearchClubsByLeague::class.java)
+            "SearchClubsByLeagueActivity" -> Intent(this, SearchClubsByLeague::class.java)
             "SearchForClubsActivity" -> Intent(this, SearchForClubsActivity::class.java)
+            "RetrieveJerseysActivity" -> Intent(this, RetrieveJersey::class.java)
             else -> {
                 null
             }
@@ -178,8 +179,8 @@ fun HomeScreen(onClicked: (String) -> Unit) {
                  {
                     Text(text = "Add Leagues to DB",
                         color = Color.White,
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Medium)
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -190,7 +191,7 @@ fun HomeScreen(onClicked: (String) -> Unit) {
             Row(modifier = Modifier.padding(vertical = 10.dp)) {
                 Button(
                     onClick = {
-                        onClicked("SearchClubsByLeague")
+                        onClicked("SearchClubsByLeagueActivity")
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF75A488)),
                     modifier = Modifier
@@ -200,8 +201,8 @@ fun HomeScreen(onClicked: (String) -> Unit) {
                     Text(
                         "Search Clubs By League",
                         color = Color.White,
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Medium
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
@@ -221,8 +222,29 @@ fun HomeScreen(onClicked: (String) -> Unit) {
                     Text(
                         "Search For Clubs",
                         color = Color.White,
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Medium
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+
+        item {
+            Row(modifier = Modifier.padding(vertical = 10.dp)) {
+                Button(
+                    onClick = {
+                        onClicked("RetrieveJerseysActivity")
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF75A488)),
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .width(300.dp),
+                ) {
+                    Text(
+                        "Retrieve Jerseys",
+                        color = Color.White,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
