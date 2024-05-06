@@ -18,6 +18,4 @@ data class ClubDetails(
     var strWebsite:String,
     var strTeamJersey:String,
     var strTeamLogo:String
-
-
 )

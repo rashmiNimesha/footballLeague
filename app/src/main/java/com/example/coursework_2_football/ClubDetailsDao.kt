@@ -13,4 +13,7 @@ interface ClubDetailsDao{
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTeam(club: ClubDetails)
 
+    @Query("SELECT * FROM club_details WHERE lower(strTeam) LIKE '%' || lower(:keyword) || '%' OR lower(strLeague) LIKE '%' || lower(:keyword) || '%'")
+    suspend fun searchClubs(keyword: String): List<ClubDetails>
+
 }

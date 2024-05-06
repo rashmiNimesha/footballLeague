@@ -41,17 +41,18 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 
-lateinit var database_: AppDatabase
+
 lateinit var clubDetailsdao: ClubDetailsDao
+
 var listClub = mutableListOf<ClubDetails>()
 class SearchClubsByLeague : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        database_ = Room.databaseBuilder(
+        database = Room.databaseBuilder(
             this,
             AppDatabase::class.java, "mydatabase"
         ).build()
-        clubDetailsdao = database_.getClubDao()
+        clubDetailsdao = database.getClubDao()
 
         setContent {
             SearchClubsByLeagueFun()
@@ -200,17 +201,17 @@ suspend fun parseJSON(stb: String): String {
 
         allTeams.append(
             "Team ID: $idTeam\n" +
-                    "Name: $name\n" +
+                    "Name      : $name\n" +
                     "Short Name: $shortName\n" +
                     "Alternate Name: $alternateName\n" +
-                    "Formed Year: $formedYear\n" +
-                    "League: $league\n" +
-                    "Stadium: $stadium\n" +
+                    "Formed Year   : $formedYear\n" +
+                    "League    : $league\n" +
+                    "Stadium   : $stadium\n" +
                     "Stadium Location: $stadiumLocation\n" +
                     "Stadium Capacity: $stadiumCapacity\n" +
-                    "Website: $website\n" +
+                    "Website   : $website\n" +
                     "Jersey URL: $jerseyUrl\n" +
-                    "Logo URL: $logoUrl\n\n"
+                    "Logo URL  : $logoUrl\n\n"
         )
         val clubDetails = ClubDetails(
             idTeam,
@@ -234,46 +235,3 @@ suspend fun parseJSON(stb: String): String {
 
     return allTeams.toString()
 }
-//suspend fun saveClubsToDatabase(clubDetailsString: String) {
-//    val jsonArray = JSONArray(clubDetailsString)
-//
-//    withContext(Dispatchers.IO) {
-//        try {
-//            for (i in 0 until jsonArray.length()) {
-//                val team = jsonArray.getJSONObject(i)
-//                val idTeam = team.getString("idTeam")
-//                val name = team.getString("strTeam")
-//                val shortName = team.getString("strTeamShort")
-//                val alternateName = team.getString("strAlternate")
-//                val formedYear = team.getString("intFormedYear")
-//                val league = team.getString("strLeague")
-//                val stadium = team.getString("strStadium")
-//                val stadiumLocation = team.getString("strStadiumLocation")
-//                val stadiumCapacity = team.getString("intStadiumCapacity")
-//                val website = team.getString("strWebsite")
-//                val jerseyUrl = team.getString("strTeamJersey")
-//                val logoUrl = team.getString("strTeamLogo")
-//
-//                val clubDetails = ClubDetails(
-//                    idTeam,
-//                    name,
-//                    shortName,
-//                    alternateName,
-//                    formedYear,
-//                    league,
-//                    stadium,
-//                    stadiumLocation,
-//                    stadiumCapacity,
-//                    website,
-//                    jerseyUrl,
-//                    logoUrl
-//                )
-//
-//                clubDetailsdao.insertTeam(clubDetails)
-//            }
-//        } catch (e: Exception) {
-//            // Handle any exceptions or errors here
-//            e.printStackTrace()
-//        }
-//    }
-//}
